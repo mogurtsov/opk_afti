@@ -1,7 +1,7 @@
 from json import dumps, loads
 
-def compress(data,pilot_len=256,search_len=1000):
-    data=dumps(data)#str(dumps(data))[2:-1]
+def compress(data,pilot_len=256,search_len=1000):#list -> [(x, y, z), ...]
+    data=dumps(data)
     out=[]
     i=0
     while i<len(data):
@@ -11,7 +11,7 @@ def compress(data,pilot_len=256,search_len=1000):
         best_destep=0
         best_char=data[i]
         for j in range(1,search_len):
-            substr=search[-j:0]
+            substr=search[-j:]
             length=0
             while length<len(substr) and length<pilot_len and substr[length]==pilot[length]:
                 length+=1
@@ -22,12 +22,9 @@ def compress(data,pilot_len=256,search_len=1000):
                     best_char=''
                 else:
                     best_char=data[i+best_len]
-        #if best_len>0:
         out.append((best_destep,best_len,best_char))
         i+=(1+best_len)
     return out
-        
-        
 
 def decompress(compressed):
     out=[]
@@ -36,10 +33,8 @@ def decompress(compressed):
         if destep==0==length:
             out.append(char)
         else:
-            #
+            l=len(out)
             for i in range(length):
-                out.append(out[i+len(out)-destep])
+                out.append(out[i+l-destep])
             out.append(char)
-    return loads(''.join(out))#bytes((''.join(out)).replace('\\',str(\)),utf8)
-            
-
+    return loads(''.join(out))
